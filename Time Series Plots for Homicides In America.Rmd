@@ -1,0 +1,151 @@
+---
+title: "Homicides in America: Interactive Time Series Graphics"
+author: "Gordon Wang"
+date: "April 30, 2018"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+runtime: shiny
+---
+```{r, warning = FALSE, message = FALSE}
+# Load data manipulation packages
+library(tidyverse)
+library(zoo)
+
+# Load dataset
+homicides <- read.csv("database.csv")
+
+# Subset dataset to only contain the years 2000-2014
+homicides <- homicides[-which(homicides$Year < 2000),]
+
+# Remove NA values
+homicides <- homicides[complete.cases(homicides),]
+
+# Concatenate the Year and Month columns into a new Date column
+homicides$Date = as.character(paste(homicides$Year, 
+                                    homicides$Month, sep = " "))
+
+# Convert new Date column to be of class Date
+homicides$Date = as.Date(as.yearmon(homicides$Date,"%Y %B"))
+```
+
+```{r}
+# Loading packages for interactivity and plotting
+library(shiny)
+library(rsconnect)
+library(plotly)
+library(ggplot2)
+
+# Create interactive time series that shows monthly homicides for specified year
+shinyApp(
+  ui = fluidPage(
+    inputPanel(
+      selectInput("which_year", label = "Year Selection:",
+                  choices = c("All", 2000, 2001, 2002, 2003, 2004, 2005, 2006, 
+                              2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014),
+                              selected = "All")
+    ),
+    
+    plotOutput("monthly_time_series")
+  ),
+  
+  server = function(input, output) {
+    output$monthly_time_series <- renderPlot({
+    if(input$which_year == "All"){
+  # Create new data frame summarizing homicide frequency per month
+       by.Year <- homicides %>%
+          group_by(Date) %>%
+          summarize(Homicide_Count = n())
+        
+    p0 <- ggplot(by.Year, aes(x = Date, y = Homicide_Count)) + 
+      geom_line(col = "darkslategray4") +
+      scale_x_date(date_breaks = '1 year', date_labels = '%Y') +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+          plot.title = element_text(size = 20), 
+          axis.title.x = element_text(size = 15),
+          axis.title.y = element_text(size = 15)) +
+      labs(title = 'Number of US Homicides Per Month from 2000-2014',
+           caption = 'Source: Murder Accountability Project',
+           x = 'Year',
+           y = 'Number of Homicides')
+        
+    p0
+    
+     } else{
+# Create new data frame summarizing homicides per month for specified year
+    by.Year <- homicides[homicides$Year == input$which_year,] %>%
+    group_by(Date) %>%
+    summarize(Homicide_Count = n())
+      
+    p1 <- ggplot(by.Year, aes(x = Date, y = Homicide_Count)) + 
+      geom_line(col = "darkslategray4") + 
+      theme(plot.title = element_text(size = 20),
+            axis.title.x = element_text(size = 15),
+            axis.title.y = element_text(size = 15)) +
+      scale_x_date(date_breaks = '1 month', date_labels = '%b') + 
+      labs(title = 'Number of US Homicides Per Month',
+           caption = 'Source: Murder Accountability Project',
+           x = 'Months',
+           y = 'Number of Homicides')
+
+    p1
+    
+    }
+      
+    })
+  },
+  
+  options = list(height = 550)
+)
+```
+
+```{r}
+# Create time series of homicide count per relationship between victim and perpetrator from 2000-2014
+shinyApp(
+  ui = fluidPage(
+      inputPanel(
+      selectInput("which_relationship", 
+                  label = "Relationship between Victim and Perpetrator:",
+                  choices = unique(homicides$Relationship), 
+                  selected = "Acquaintance")
+    ),
+    
+    plotOutput("relation_time_series")
+  )
+    ,
+  
+  server = function(input, output) {
+    output$relation_time_series <- renderPlot({
+      
+# Create data frame summarizing homicides per year for specified relationship 
+    by.relationship <- 
+      homicides[homicides$Relationship == input$which_relationship,] %>%
+  group_by(Year) %>%
+  summarize(Homicides = n())
+      
+     p2 <- ggplot(by.relationship, aes(x = Year, y = Homicides)) + 
+       geom_line(col = "darkslategray4") + 
+    scale_x_continuous(breaks = seq(2000, 2014, 1)) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          plot.title = element_text(size = 20), 
+          axis.title.x = element_text(size = 15),
+          axis.title.y = element_text(size = 15)) +
+    labs(title = 'US Homicides By Relationship From 2000-2014',
+         caption = 'Source: Murder Accountability Project',
+         x = 'Years',
+         y = 'Number of Homicides')
+     
+     p2
+     
+    })
+  },
+  options = list(height = 550)
+)
+```
+
+
+
+
+
