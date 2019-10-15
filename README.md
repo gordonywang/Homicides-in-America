@@ -6,8 +6,8 @@ Interactive Graphics Final Project | 36-315: Statistical Graphics and Visualizat
 •	Devised and programmed in R with ggplot2 and Shiny interactive time series plots (25% of project’s graphics) featuring dropdown menu functionality added to facilitate yearly homicide frequency trend analytics.
 
 Dataset can be accessed here: https://www.kaggle.com/murderaccountability/homicide-reports/ or directly above: "database.csv"
-Code for Time Series available above as well.
 
+Code for Time Series Plots available above as well.
 
 Project itself (web app) can be accessed here: https://ferrypurple.shinyapps.io/ferrypurple/
 
