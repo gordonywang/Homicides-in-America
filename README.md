@@ -7,7 +7,7 @@ Interactive Graphics Final Project | 36-315: Statistical Graphics and Visualizat
 
 Dataset can be accessed here: https://www.kaggle.com/murderaccountability/homicide-reports/ or directly above: "database.csv"
 
-Code for Time Series Plots available above as well.
+Code for Time Series Plots available above as well in the RMarkdown (.rmd) file.
 
 Project itself (web app) can be accessed here: https://ferrypurple.shinyapps.io/ferrypurple/
 
