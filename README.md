@@ -9,6 +9,8 @@ Interactive Graphics Final Project | 36-315: Statistical Graphics and Visualizat
 Dataset can be accessed here: https://www.kaggle.com/murderaccountability/homicide-reports/ or directly above: homicide_reports.zip
 
 Code for Time Series Plots available above as well in the RMarkdown (.rmd) file.
+
+
 ui.R contains the our web application's user interface code, which controls how the sidebar menu and interactive parts of each graphic function and display for a user. server.R contains all of the code for the plots and graphics that are to be embedded in the user interface.
 
 Project itself (web app) can be accessed here: https://ferrypurple.shinyapps.io/ferrypurple/
